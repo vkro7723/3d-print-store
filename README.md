@@ -45,60 +45,44 @@ This is a Next.js + Sanity CMS based e-commerce website for selling 3D printed p
 
 ### 2. Configure Environment Variables
 
-Update `.env.local` with your Sanity credentials:
+Create or update `.env.local` with your credentials. You will also need to add these to your Vercel project settings:
 
-```
-NEXT_PUBLIC_SANITY_PROJECT_ID=your-actual-project-id
+```bash
+# Sanity CMS (Get these from sanity.io project settings)
+NEXT_PUBLIC_SANITY_PROJECT_ID=your-project-id
 NEXT_PUBLIC_SANITY_DATASET=production
+
+# Stripe (Get these from stripe.com dashboard -> Developers -> API keys)
+# Use 'Test Mode' keys first!
+STRIPE_SECRET_KEY=sk_test_...
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
 ```
 
 ### 3. Start Development
 
 ```bash
-cd 3d-print-store
 npm run dev
 ```
 
-### 4. Access Sanity Studio (Content Management)
-
-```bash
-npm run sanity
-```
-
-This will open Sanity Studio where you can:
-- Add/edit products
-- Update site settings
-- Manage all content
-
-## Features
-
-- [x] Homepage with hero banner
-- [x] Products listing page with category filters
-- [x] About page
-- [x] Contact page
-- [ ] Shopping cart
-- [ ] Payment integration (Stripe/PayPal)
-- [ ] Order management
-
 ## Deployment
 
-### Deploy to Vercel
+### Step 1: Push to GitHub
+1. Create a new repository on GitHub.
+2. Link your local project:
+   ```bash
+   git remote add origin https://github.com/yourusername/your-repo-name.git
+   git push -u origin main
+   ```
 
-1. Push your code to GitHub
-2. Connect to Vercel
-3. Add environment variables in Vercel dashboard
-4. Deploy
+### Step 2: Deploy to Vercel
+1. Log in to [Vercel](https://vercel.com/).
+2. Click "Add New" -> "Project".
+3. Import your GitHub repository.
+4. **Crucial**: Add the 4 environment variables listed above in the "Environment Variables" section during setup.
+5. Click "Deploy".
 
-## Customization
+## Maintenance
 
-### Changing Colors/Fonts
-
-Edit `src/app/globals.css` for global styles.
-
-### Adding New Pages
-
-Create new folders in `src/app/` directory.
-
-### Modifying Product Schema
-
-Edit `sanity/schema/product.ts` to add/remove product fields.
+- **Adding Products**: Use `npm run sanity` or log in to the Sanity.io dashboard.
+- **Changing UI**: This project uses Tailwind CSS and Next.js App Router. Most layout changes can be made in `src/app/layout.tsx` or individual page files.
+- **Zero Cost**: Your hosting (Vercel) and CMS (Sanity) are free for small to medium traffic. Stripe only charges a fee per successful transaction.

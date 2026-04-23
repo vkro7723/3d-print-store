@@ -29,17 +29,31 @@ export function ProductCard({ product }: ProductCardProps) {
               No Image
             </div>
           )}
+          {product.isOnSale && (
+            <div className="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded uppercase">
+              Sale
+            </div>
+          )}
         </div>
         <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 truncate">
           {product.title}
         </h3>
-        <p className="text-gray-500 mb-4">${product.price.toFixed(2)}</p>
+        <div className="flex items-center justify-center gap-2 mb-4">
+          {product.isOnSale && product.discountPrice ? (
+            <>
+              <p className="text-red-600 font-bold">${product.discountPrice.toFixed(2)}</p>
+              <p className="text-gray-400 text-sm line-through">${product.price.toFixed(2)}</p>
+            </>
+          ) : (
+            <p className="text-gray-500">${product.price.toFixed(2)}</p>
+          )}
+        </div>
       </Link>
       <button
         onClick={() => addItem({
           id: product._id,
           title: product.title,
-          price: product.price,
+          price: product.isOnSale && product.discountPrice ? product.discountPrice : product.price,
           image: product.mainImage ? urlFor(product.mainImage).url() : undefined
         })}
         className="w-full bg-black text-white py-2 rounded-full hover:bg-gray-800 transition-colors text-sm"

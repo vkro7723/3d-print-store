@@ -56,7 +56,19 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
               {product.category}
             </span>
             <h1 className="text-4xl font-bold text-gray-900 mb-2">{product.title}</h1>
-            <p className="text-3xl text-gray-900 font-medium">${product.price.toFixed(2)}</p>
+            <div className="flex items-center gap-4 mb-4">
+              {product.isOnSale && product.discountPrice ? (
+                <>
+                  <p className="text-3xl text-red-600 font-bold">${product.discountPrice.toFixed(2)}</p>
+                  <p className="text-xl text-gray-400 line-through">${product.price.toFixed(2)}</p>
+                  <span className="bg-red-100 text-red-600 text-xs font-bold px-2 py-1 rounded">
+                    SALE
+                  </span>
+                </>
+              ) : (
+                <p className="text-3xl text-gray-900 font-medium">${product.price.toFixed(2)}</p>
+              )}
+            </div>
           </div>
 
           <div className="prose prose-blue mb-10 text-gray-600">
@@ -85,7 +97,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             product={{
               _id: product._id,
               title: product.title,
-              price: product.price,
+              price: product.isOnSale && product.discountPrice ? product.discountPrice : product.price,
               image: product.mainImage ? urlFor(product.mainImage).url() : undefined
             }} 
           />

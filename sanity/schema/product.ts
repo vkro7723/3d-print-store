@@ -33,9 +33,22 @@ export const product = defineType({
     }),
     defineField({
       name: 'price',
-      title: 'Price (USD)',
+      title: 'Original Price (USD)',
       type: 'number',
       validation: (Rule) => Rule.required().positive(),
+    }),
+    defineField({
+      name: 'discountPrice',
+      title: 'Discount Price (USD)',
+      type: 'number',
+      description: 'Optional: Set a lower price for sales',
+      validation: (Rule) => Rule.positive().lessThan(Rule.valueOfField('price')),
+    }),
+    defineField({
+      name: 'isOnSale',
+      title: 'Is On Sale?',
+      type: 'boolean',
+      initialValue: false,
     }),
     defineField({
       name: 'description',

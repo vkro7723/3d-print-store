@@ -15,6 +15,8 @@ export interface Product {
   mainImage: SanityImage
   gallery?: SanityImage[]
   price: number
+  discountPrice?: number
+  isOnSale: boolean
   description?: unknown // Rich text is complex
   category: string
   printHeight?: number

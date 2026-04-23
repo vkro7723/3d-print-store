@@ -71,6 +71,8 @@ export async function getProducts() {
       slug,
       mainImage,
       price,
+      discountPrice,
+      isOnSale,
       category,
       inStock,
       featured
@@ -88,6 +90,8 @@ export async function getProductBySlug(slug: string) {
       mainImage,
       gallery,
       price,
+      discountPrice,
+      isOnSale,
       description,
       category,
       printHeight,
@@ -126,6 +130,8 @@ export async function getFeaturedProducts() {
       slug,
       mainImage,
       price,
+      discountPrice,
+      isOnSale,
       category,
       inStock
     }
