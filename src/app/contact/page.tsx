@@ -7,7 +7,7 @@ export default function ContactPage() {
         <div className="space-y-6">
           <div>
             <label className="block text-sm font-medium mb-2">Email</label>
-            <p className="text-gray-600">hello@3dprintstore.com</p>
+            <p className="text-gray-600">1427619531@qq.com</p>
           </div>
 
           <div>
