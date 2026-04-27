@@ -4,40 +4,13 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useCart } from '@/context/CartContext'
 import { useState } from 'react'
+import { PayPalButtons } from "@paypal/react-paypal-js"
+import { useRouter } from 'next/navigation'
 
 export default function CartPage() {
   const { items, removeItem, updateQuantity, totalPrice, clearCart } = useCart()
   const [isLoading, setIsLoading] = useState(false)
-
-  const handleCheckout = async () => {
-    setIsLoading(true)
-    try {
-      const response = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ items }),
-      })
-
-      const data = await response.json()
-      
-      if (data.error) {
-        alert(data.error === 'Stripe is not configured' 
-          ? 'Checkout is disabled: Stripe API keys are not set yet.' 
-          : data.error)
-        setIsLoading(false)
-        return
-      }
-
-      if (data.url) {
-        window.location.href = data.url
-      }
-    } catch (err) {
-      console.error('Checkout error:', err)
-      setIsLoading(false)
-    }
-  }
+  const router = useRouter()
 
   if (items.length === 0) {
     return (
@@ -119,13 +92,38 @@ export default function CartPage() {
                 <span>${totalPrice.toFixed(2)}</span>
               </div>
             </div>
-            <button
-              onClick={handleCheckout}
-              disabled={isLoading}
-              className={`w-full bg-black text-white py-4 rounded-full font-bold hover:bg-gray-800 transition-all ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-            >
-              {isLoading ? 'Processing...' : 'Proceed to Checkout'}
-            </button>
+            
+            <div className="mt-6">
+              <PayPalButtons
+                style={{ layout: "vertical", shape: "pill", label: "checkout" }}
+                createOrder={(data, actions) => {
+                  return actions.order.create({
+                    intent: "CAPTURE",
+                    purchase_units: [
+                      {
+                        amount: {
+                          currency_code: "USD",
+                          value: totalPrice.toFixed(2),
+                        },
+                      },
+                    ],
+                  });
+                }}
+                onApprove={async (data, actions) => {
+                  if (actions.order) {
+                    const details = await actions.order.capture();
+                    console.log("Transaction completed by " + details.payer?.name?.given_name);
+                    clearCart();
+                    router.push("/success");
+                  }
+                }}
+                onError={(err) => {
+                  console.error("PayPal Error:", err);
+                  alert("There was an error processing your payment with PayPal.");
+                }}
+              />
+            </div>
+
             <button
               onClick={clearCart}
               className="w-full mt-4 text-gray-400 text-sm hover:text-red-500 transition-colors"

@@ -10,6 +10,7 @@
     "sanity": "sanity dev"
   },
   "dependencies": {
+    "@paypal/react-paypal-js": "^9.1.1",
     "@sanity/client": "^7.21.0",
     "@sanity/image-url": "^2.1.1",
     "@sanity/vision": "^5.22.0",
