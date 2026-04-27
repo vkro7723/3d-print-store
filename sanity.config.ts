@@ -7,7 +7,7 @@ export default defineConfig({
   name: 'default',
   title: '3D Print Store',
 
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'your-project-id',
+  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'pi8tnkwc',
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
 
   plugins: [structureTool(), visionTool()],

@@ -1,8 +1,7 @@
 import { createClient } from '@sanity/client'
 import { createImageUrlBuilder } from '@sanity/image-url'
-import productsData from '../data/products.json'
 
-const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'placeholder'
+const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'pi8tnkwc'
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production'
 
 export const client = createClient({
@@ -12,35 +11,61 @@ export const client = createClient({
   useCdn: true,
 })
 
+// Fix for deprecated default export
 const builder = createImageUrlBuilder(client)
 
-export function urlFor(source: any) {
+export function urlFor(source: unknown) {
   if (!source) return null
-  if (typeof source === 'string') return { url: () => source }
-  return builder.image(source)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return builder.image(source as any)
 }
 
 const isConfigured = projectId !== 'placeholder'
 
-// Transform local JSON data to match expected Sanity types
-const LOCAL_PRODUCTS = productsData.map(p => ({
-  _id: p.id,
-  title: p.title,
-  slug: { current: p.slug },
-  mainImage: p.image,
-  price: p.price,
-  discountPrice: p.discountPrice,
-  isOnSale: p.isOnSale,
-  category: p.category,
-  description: p.description,
-  printMaterial: p.material,
-  printHeight: p.height,
-  inStock: true,
-  featured: true
-}))
+const MOCK_PRODUCTS = [
+  {
+    _id: '1',
+    title: 'Articulated Dragon Toy',
+    slug: { current: 'articulated-dragon' },
+    mainImage: null,
+    price: 24.99,
+    category: 'toy',
+    inStock: true,
+    featured: true,
+    description: 'A fully flexible, 3D printed dragon. Perfect for fidgeting and decoration.',
+    printMaterial: 'Silk PLA',
+    printHeight: 200
+  },
+  {
+    _id: '2',
+    title: 'Low-Poly T-Rex',
+    slug: { current: 'low-poly-trex' },
+    mainImage: null,
+    price: 15.00,
+    category: 'toy',
+    inStock: true,
+    featured: true,
+    description: 'Classic low-poly dinosaur model. A must-have for any 3D printing enthusiast.',
+    printMaterial: 'PLA',
+    printHeight: 120
+  },
+  {
+    _id: '3',
+    title: 'Geometric Planter',
+    slug: { current: 'geometric-planter' },
+    mainImage: null,
+    price: 19.99,
+    category: 'decoration',
+    inStock: true,
+    featured: false,
+    description: 'Modern geometric design planter. Adds a touch of math to your home decor.',
+    printMaterial: 'PETG',
+    printHeight: 100
+  }
+]
 
 export async function getProducts() {
-  if (!isConfigured) return LOCAL_PRODUCTS
+  if (!isConfigured) return MOCK_PRODUCTS
   return client.fetch(`
     *[_type == "product"] | order(_createdAt desc) {
       _id,
@@ -58,7 +83,7 @@ export async function getProducts() {
 }
 
 export async function getProductBySlug(slug: string) {
-  if (!isConfigured) return LOCAL_PRODUCTS.find(p => p.slug.current === slug) || null
+  if (!isConfigured) return MOCK_PRODUCTS.find(p => p.slug.current === slug) || null
   return client.fetch(`
     *[_type == "product" && slug.current == $slug][0] {
       _id,
@@ -99,7 +124,7 @@ export async function getSiteSettings() {
 }
 
 export async function getFeaturedProducts() {
-  if (!isConfigured) return LOCAL_PRODUCTS
+  if (!isConfigured) return MOCK_PRODUCTS.filter(p => p.featured)
   return client.fetch(`
     *[_type == "product" && featured == true] | order(_createdAt desc) {
       _id,
