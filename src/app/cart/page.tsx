@@ -11,32 +11,20 @@ export default function CartPage() {
 
   const handleCheckout = async () => {
     setIsLoading(true)
-    try {
-      const response = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ items }),
-      })
+    // Option 1: WhatsApp Checkout (Direct Contact)
+    const cartSummary = items.map(item => `${item.title} (x${item.quantity})`).join(', ')
+    const whatsappMessage = encodeURIComponent(`Hi, I'd like to order: ${cartSummary}. Total: $${totalPrice.toFixed(2)}`)
+    const whatsappUrl = `https://wa.me/YOUR_PHONE_NUMBER?text=${whatsappMessage}`
+    
+    // For now, let's provide a choice or just use WhatsApp as the most reliable domestic->overseas method
+    window.open(whatsappUrl, '_blank')
+    setIsLoading(false)
+  }
 
-      const data = await response.json()
-      
-      if (data.error) {
-        alert(data.error === 'Stripe is not configured' 
-          ? 'Checkout is disabled: Stripe API keys are not set yet.' 
-          : data.error)
-        setIsLoading(false)
-        return
-      }
-
-      if (data.url) {
-        window.location.href = data.url
-      }
-    } catch (err) {
-      console.error('Checkout error:', err)
-      setIsLoading(false)
-    }
+  const handlePayPalCheckout = () => {
+    // Direct PayPal payment link (requires business email)
+    const paypalUrl = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=YOUR_PAYPAL_EMAIL&item_name=3D_Print_Order&amount=${totalPrice.toFixed(2)}&currency_code=USD`
+    window.open(paypalUrl, '_blank')
   }
 
   if (items.length === 0) {
@@ -103,35 +91,41 @@ export default function CartPage() {
         </div>
 
         <div className="lg:col-span-1">
-          <div className="border rounded-lg p-6 sticky top-4 bg-white">
+          <div className="bg-gray-50 rounded-lg p-6 sticky top-8">
             <h2 className="text-xl font-bold mb-4">Order Summary</h2>
-            <div className="space-y-3 mb-6">
-              <div className="flex justify-between">
-                <span className="text-gray-600">Subtotal</span>
-                <span>${totalPrice.toFixed(2)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Shipping</span>
-                <span className="text-xs text-gray-400">Calculated at checkout</span>
-              </div>
-              <div className="border-t pt-3 flex justify-between font-bold text-lg">
-                <span>Total</span>
-                <span>${totalPrice.toFixed(2)}</span>
-              </div>
+            <div className="flex justify-between mb-4">
+              <span>Subtotal</span>
+              <span>${totalPrice.toFixed(2)}</span>
             </div>
-            <button
-              onClick={handleCheckout}
-              disabled={isLoading}
-              className={`w-full bg-black text-white py-4 rounded-full font-bold hover:bg-gray-800 transition-all ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-            >
-              {isLoading ? 'Processing...' : 'Proceed to Checkout'}
-            </button>
-            <button
-              onClick={clearCart}
-              className="w-full mt-4 text-gray-400 text-sm hover:text-red-500 transition-colors"
-            >
-              Clear Cart
-            </button>
+            <div className="flex justify-between mb-6 font-bold text-lg">
+              <span>Total</span>
+              <span>${totalPrice.toFixed(2)}</span>
+            </div>
+            
+            <div className="space-y-3">
+              <button
+                onClick={handlePayPalCheckout}
+                disabled={isLoading}
+                className="w-full bg-[#0070ba] text-white py-3 rounded-full font-bold hover:bg-[#003087] transition-colors flex items-center justify-center gap-2"
+              >
+                Pay with PayPal
+              </button>
+              
+              <button
+                onClick={handleCheckout}
+                disabled={isLoading}
+                className="w-full bg-[#25D366] text-white py-3 rounded-full font-bold hover:bg-[#128C7E] transition-colors flex items-center justify-center gap-2"
+              >
+                Contact on WhatsApp
+              </button>
+
+              <button
+                onClick={clearCart}
+                className="w-full text-gray-500 text-sm py-2 hover:underline"
+              >
+                Clear Cart
+              </button>
+            </div>
             <Link href="/products" className="block text-center text-gray-500 text-sm mt-6 hover:underline">
               ← Continue Shopping
             </Link>
