@@ -26,7 +26,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
           <div className="bg-gray-50 aspect-square relative rounded-2xl overflow-hidden border border-gray-100">
             {product.mainImage ? (
               <Image
-                src={urlFor(product.mainImage).url()}
+                src={urlFor(product.mainImage)?.url() || ''}
                 alt={product.title}
                 fill
                 className="object-cover"
@@ -42,7 +42,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             <div className="grid grid-cols-4 gap-4">
               {product.gallery.map((img, idx) => (
                 <div key={idx} className="bg-gray-50 aspect-square relative rounded-lg overflow-hidden border border-gray-100 cursor-pointer hover:border-black transition-colors">
-                  <Image src={urlFor(img).url()} alt={`${product.title} ${idx + 1}`} fill className="object-cover" />
+                  <Image src={urlFor(img)?.url() || ''} alt={`${product.title} ${idx + 1}`} fill className="object-cover" />
                 </div>
               ))}
             </div>
@@ -98,7 +98,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
               _id: product._id,
               title: product.title,
               price: product.isOnSale && product.discountPrice ? product.discountPrice : product.price,
-              image: product.mainImage ? urlFor(product.mainImage).url() : undefined
+              image: product.mainImage ? (urlFor(product.mainImage)?.url() || undefined) : undefined
             }} 
           />
           

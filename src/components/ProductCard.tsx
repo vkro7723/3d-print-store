@@ -19,7 +19,7 @@ export function ProductCard({ product }: ProductCardProps) {
         <div className="relative bg-gray-100 aspect-square mb-4 overflow-hidden rounded-md">
           {product.mainImage ? (
             <Image
-              src={urlFor(product.mainImage).url()}
+              src={urlFor(product.mainImage)?.url() || ''}
               alt={product.title}
               fill
               className="object-cover group-hover:scale-105 transition-transform"
@@ -54,7 +54,7 @@ export function ProductCard({ product }: ProductCardProps) {
           id: product._id,
           title: product.title,
           price: product.isOnSale && product.discountPrice ? product.discountPrice : product.price,
-          image: product.mainImage ? urlFor(product.mainImage).url() : undefined
+          image: product.mainImage ? (urlFor(product.mainImage)?.url() || undefined) : undefined
         })}
         className="w-full bg-black text-white py-2 rounded-full hover:bg-gray-800 transition-colors text-sm"
       >
